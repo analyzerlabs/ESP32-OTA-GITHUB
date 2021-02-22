@@ -3,5 +3,5 @@
     "version": 2,
     "host": "raw.githubusercontent.com",
     "port": 443,
-    "bin": "/chrisjoyce911/esp32FOTA/master/examples/HTTPS/fota/fota_via_https_v2.bin"
+    "bin": "/analyzerlabs/ESP32-OTA-GITHUB/fota_via_https_v2.bin"
 }
