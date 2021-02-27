@@ -39,7 +39,7 @@ Button enter = {27,  0, false};
 Button less =  {26, 0, false};
 
 String FirmwareVer = {
-  "3.2"
+  "4.0"
 };
 void fondo(bool r){
     if(r){
