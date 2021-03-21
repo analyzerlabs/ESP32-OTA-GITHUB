@@ -80,21 +80,23 @@ void IRAM_ATTR isr() {
 void setup() {
   tft.init();
   tft.setRotation(3);
-  tft.fillScreen(TFT_CYAN);
   fondo(true);
   pinMode(button_boot.PIN, INPUT);
   pinMode(more.PIN ,INPUT);
   pinMode(enter.PIN,INPUT);
   pinMode(less.PIN  ,INPUT);
+  pinMode(1  ,OUTPUT);
+  pinMode(3  ,OUTPUT);
   attachInterrupt(button_boot.PIN, isr, RISING);
   attachInterrupt(more.PIN , increment, FALLING);
   attachInterrupt(enter.PIN, change, FALLING);
   attachInterrupt(less.PIN , decrement, FALLING);
-  Serial.begin(115200);
-  Serial.print("Active firmware version:");
-  Serial.println(FirmwareVer);
+  //Serial.begin(115200);
+  //Serial.print("Active firmware version:");
+  //Serial.println(FirmwareVer);
   pinMode(LED_BUILTIN, OUTPUT);
   tft.setTextFont(7);
+  
   opcion = 0;
   enter.pressed = false;
   connect_wifi();
@@ -104,7 +106,7 @@ void setup() {
 
 void loop() {
   if (button_boot.pressed) { //to connect wifi via Android esp touch app 
-    Serial.println("Firmware update Starting..");
+    //Serial.println("Firmware update Starting..");
     firmwareUpdate();
     button_boot.pressed = false;
   }
@@ -124,17 +126,17 @@ void loop() {
 }
 
 void connect_wifi() {
-  Serial.println("Waiting for WiFi");
+  //Serial.println("Waiting for WiFi");
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
+    //Serial.print(".");
   }
 
-  Serial.println("");
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
+  //Serial.println("");
+  //Serial.println("WiFi connected");
+  //Serial.println("IP address: ");
+  //Serial.println(WiFi.localIP());
 }
 
 
@@ -146,15 +148,15 @@ void firmwareUpdate(void) {
 
   switch (ret) {
   case HTTP_UPDATE_FAILED:
-    Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s\n", httpUpdate.getLastError(), httpUpdate.getLastErrorString().c_str());
+    //Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s\n", httpUpdate.getLastError(), httpUpdate.getLastErrorString().c_str());
     break;
 
   case HTTP_UPDATE_NO_UPDATES:
-    Serial.println("HTTP_UPDATE_NO_UPDATES");
+    //Serial.println("HTTP_UPDATE_NO_UPDATES");
     break;
 
   case HTTP_UPDATE_OK:
-    Serial.println("HTTP_UPDATE_OK");
+    //Serial.println("HTTP_UPDATE_OK");
     break;
   }
 }
@@ -165,7 +167,7 @@ int FirmwareVersionCheck(void) {
   fwurl += URL_fw_Version;
   fwurl += "?";
   fwurl += String(rand());
-  Serial.println(fwurl);
+  //Serial.println(fwurl);
   WiFiClientSecure * client = new WiFiClientSecure;
 
   if (client) 
@@ -177,7 +179,7 @@ int FirmwareVersionCheck(void) {
 
     if (https.begin( * client, fwurl)) 
     { // HTTPS      
-      Serial.print("[HTTPS] GET...\n");
+      //Serial.print("[HTTPS] GET...\n");
       // start connection and send HTTP header
       delay(100);
       httpCode = https.GET();
@@ -186,8 +188,8 @@ int FirmwareVersionCheck(void) {
       {
         payload = https.getString(); // save received version
       } else {
-        Serial.print("error in downloading version file:");
-        Serial.println(httpCode);
+        //Serial.print("error in downloading version file:");
+        //Serial.println(httpCode);
       }
       https.end();
     }
@@ -198,13 +200,13 @@ int FirmwareVersionCheck(void) {
   {
     payload.trim();
     if (payload.equals(FirmwareVer)) {
-      Serial.printf("\nDevice already on latest firmware version:%s\n", FirmwareVer);
+      //Serial.printf("\nDevice already on latest firmware version:%s\n", FirmwareVer);
       return 0;
     } 
     else 
     {
-      Serial.println(payload);
-      Serial.println("New firmware detected");
+      //Serial.println(payload);
+      //Serial.println("New firmware detected");
       return 1;
     }
   } 

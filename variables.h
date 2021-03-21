@@ -2,7 +2,7 @@ unsigned long previousMillis = 0;
 unsigned long previousMillis_2 = 0;
 const long interval = 600000;
 const long mini_interval = 10000;
-
+#include "FONDO.h"
 const char* ssid = "MIGUEL";
 const char* password = "20120415H";
 
@@ -39,14 +39,15 @@ Button enter = {27,  0, false};
 Button less =  {26, 0, false};
 
 String FirmwareVer = {
-  "4.0"
+  "5.0"
 };
+
 void fondo(bool r){
     if(r){
       t1= millis();
       t0 = millis();
-      tft.fillScreen(TFT_CYAN);
-      tft.fillRoundRect(10, 10, w-10,h-10, 10, tft.color565(255, 255, 255));
+      tft.setSwapBytes(true);
+      tft.pushImage(0, 0, fondoWidth, fondoHeight, fondo1);
      }
   }
 
@@ -65,7 +66,7 @@ int calculoVolumen(){
   return (aux);  
 }  
 void principal(){
-    Serial.println("opcion principal");
+    //Serial.println("opcion principal");
     fondo(refresh);
     if(refresh){
       tft.setCursor(w/2-60, h/2-90);
@@ -74,7 +75,7 @@ void principal(){
 
       int xpos = tft.width() / 2; // Half the screen width
       int ypos = 70;
-    
+    /*
       tft.setFreeFont(FSB24);                              // Select the font
       tft.drawString("VENTILADOR", xpos, ypos, GFXFF);  // Draw the text string in the selected GFX free font
       ypos += tft.fontHeight(GFXFF);
@@ -84,12 +85,7 @@ void principal(){
       ypos += tft.fontHeight(GFXFF);
       tft.setFreeFont(FSB9);  
       tft.drawString("Soporte : miguelquispecastro@uni.com", 20, 300, GFXFF);
-      tft.fillCircle(70, 70, 50, TFT_MAGENTA);
-      tft.fillCircle(70, 70, 47, TFT_WHITE);
-      tft.drawLine(30, 70, 70, 30, TFT_MAGENTA);
-      tft.drawLine(70, 30, 110, 70, TFT_MAGENTA);
-      tft.drawLine(110, 70, 70, 110, TFT_MAGENTA);
-      tft.drawLine(70, 110, 30, 70, TFT_MAGENTA);
+      tft.pushImage(0, 0, pulmonWidth, pulmonHeight, pulmon);*/
     }
     refresh = false;
 
@@ -98,7 +94,7 @@ void principal(){
   }
 
 void volume(){
-    Serial.println("opcion volumen");
+    //Serial.println("opcion volumen");
     fondo(refresh);
     if(refresh){
         tft.setTextColor(TFT_BLACK,TFT_WHITE);
@@ -154,7 +150,7 @@ void volume(){
 
   
 void frecuency(){
-    Serial.println("opcion frecuencia");
+    //Serial.println("opcion frecuencia");
     fondo(refresh);   
     if(refresh){
         tft.setTextColor(TFT_BLACK,TFT_WHITE);
@@ -202,35 +198,24 @@ void frecuency(){
         tft.drawString( String(frecuencia), xpos, ypos, GFXFF); 
     }
     t_i_e[0]=calculoFrecuencia()-t_i_e[1];
-    Serial.println(t_i_e[0]);
+    //Serial.println(t_i_e[0]);
   }
 
 
-
+int contador_pasos = 0 ;
+int r = 1 ; 
+int direccion = 0;
 void Respira(){
-  if(paso == true && millis() - t1 > t_i_e[0]/angulos[1]){
-      t1=millis();
-      if(angulo_subida < angulos[1]){
-         //aqui mueve el motor
-      }
-  }
-  if(paso == false && millis() - t1 > t_i_e[1]/angulos[1]){
-      t1=millis();
-      if(angulo_subida > angulos[0]){
-         //aqui mueve el motor
-      } 
-  }
-  if(paso == true && millis() - t0> t_i_e[0]){
-      t0=millis();
-      paso=false;
-      Serial.print("inhala");
+  if(contador_pasos >= 200  || contador_pasos <=0){
+      direccion = 1 - direccion;
+      digitalWrite(3,direccion);    
+      r = r *(-1);
     }
-  else if(paso == false && millis() - t0> t_i_e[1]){
-      t0=millis();
-      paso=true;
-       Serial.print("exhala");
-      
-  }
+  contador_pasos = contador_pasos + r;
+  digitalWrite(1,HIGH);
+  delay(2);
+  digitalWrite(1,LOW);
+  delay(2);
  }
  void secundario(){
     //fondo(refresh);

@@ -74,7 +74,7 @@ void server_init(){
     else {
       inputMessage = "No message sent";
     }
-    Serial.println(inputMessage);
+    //Serial.println(inputMessage);
     request->send(200, "text/plain", "OK");
   });
   
