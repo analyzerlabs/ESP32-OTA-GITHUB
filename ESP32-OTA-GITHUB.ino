@@ -11,7 +11,7 @@
 TFT_eSPI tft = TFT_eSPI(); 
 
 #include "variables.h"
-#include "server.h"
+//#include "server.h"
 
 #define URL_fw_Version "https://raw.githubusercontent.com/analyzerlabs/ESP32-OTA-GITHUB/master/bin_version.txt"
 #define URL_fw_Bin "https://raw.githubusercontent.com/analyzerlabs/ESP32-OTA-GITHUB/master/fw.bin"
@@ -71,7 +71,6 @@ void IRAM_ATTR isr() {
 void setup() {
   tft.init();
   tft.setRotation(3);
-  fondo(true);
   pinMode(button_boot.PIN, INPUT);
   pinMode(more.PIN ,INPUT);
   pinMode(enter.PIN,INPUT);
@@ -90,7 +89,7 @@ void setup() {
   Menu = 0;
   enter.pressed = false;
   connect_wifi();
-  server_init();
+  //server_init();
   tft.setSwapBytes(true);
   tft.pushImage(0, 0, SplashWidth, SplashHeight, SplashScreen);
   repeatedCall();
@@ -98,6 +97,13 @@ void setup() {
   tft.pushImage(0, 0, RealTimeWidth, RealTimeHeight, RealTimeScreen);
 }
 
+void fondo(){
+      tft.pushImage(0, 0, FondoOffWidth, FondoOffHeight, FondoScreenOff);
+      /*tft.pushImage(0, 0, VolumenOnWidth, VolumenOnHeight, VolumenScreenOff);
+      tft.pushImage(240, 0, OxigenacionOnWidth, OxigenacionOnHeight, OxigenacionScreenOff);
+      tft.pushImage(0, 160, FrecuenciaOnWidth, FrecuenciaOnHeight, FrecuenciaScreenOff);
+      tft.pushImage(240, 160, AtrasOnWidth, AtrasOnHeight, AtrasScreenOff);*/
+  }
 void navegador(){
   if(ventana == 0 && enter.pressed == true){
        delay(50);enter.pressed = false;
@@ -159,30 +165,25 @@ void navegador(){
    //*********************************************//
   if(Menu%4 == 0){
       tft.setSwapBytes(true);
+      fondo();
       tft.pushImage(0, 0, VolumenOnWidth, VolumenOnHeight, VolumenScreenOn);
-      tft.pushImage(240, 0, OxigenacionOnWidth, OxigenacionOnHeight, OxigenacionScreenOff);
-      tft.pushImage(0, 160, FrecuenciaOnWidth, FrecuenciaOnHeight, FrecuenciaScreenOff);
-      tft.pushImage(240, 160, AtrasOnWidth, AtrasOnHeight, AtrasScreenOff);
+      tft.setSwapBytes(false);
   }
   else if(Menu%4 == 1){
       tft.setSwapBytes(true);
-      tft.pushImage(0, 0, VolumenOnWidth, VolumenOnHeight, VolumenScreenOff);
+      fondo();
       tft.pushImage(240, 0, OxigenacionOnWidth, OxigenacionOnHeight, OxigenacionScreenOn);
-      tft.pushImage(0, 160, FrecuenciaOnWidth, FrecuenciaOnHeight, FrecuenciaScreenOff);
-      tft.pushImage(240, 160, AtrasOnWidth, AtrasOnHeight, AtrasScreenOff);
+      
   } 
   else if(Menu%4 == 2){
       tft.setSwapBytes(true);
-      tft.pushImage(0, 0, VolumenOnWidth, VolumenOnHeight, VolumenScreenOff);
-      tft.pushImage(240, 0, OxigenacionOnWidth, OxigenacionOnHeight, OxigenacionScreenOff);
+      fondo();
       tft.pushImage(0, 160, FrecuenciaOnWidth, FrecuenciaOnHeight, FrecuenciaScreenOn);
-      tft.pushImage(240, 160, AtrasOnWidth, AtrasOnHeight, AtrasScreenOff);
+      //tft.pushImage(240, 160, AtrasOnWidth, AtrasOnHeight, AtrasScreenOff);
   }
   else if(Menu%4 == 3){
       tft.setSwapBytes(true);
-     tft.pushImage(0, 0, VolumenOnWidth, VolumenOnHeight, VolumenScreenOff);
-      tft.pushImage(240, 0, OxigenacionOnWidth, OxigenacionOnHeight, OxigenacionScreenOff);
-      tft.pushImage(0, 160, FrecuenciaOnWidth, FrecuenciaOnHeight, FrecuenciaScreenOff);
+      fondo();
       tft.pushImage(240, 160, AtrasOnWidth, AtrasOnHeight, AtrasScreenOn);
   }
 }
