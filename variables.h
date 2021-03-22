@@ -1,8 +1,9 @@
+
 unsigned long previousMillis = 0;
 unsigned long previousMillis_2 = 0;
 const long interval = 600000;
 const long mini_interval = 10000;
-#include "FONDO.h"
+#include "imagenes.h"
 const char* ssid = "MIGUEL";
 const char* password = "20120415H";
 
@@ -16,16 +17,16 @@ int angulo_subida=0;
 int w=480,h=320;
 int volumen=300;
 int frecuencia = 20;
-int opcion=0;
+int Menu=0;
+int ventana=0;
+int oxigenacion = 0;
 bool refresh = true;
 struct Button {
   const uint8_t PIN;
-  uint32_t numberKeyPresses;
   bool pressed;
 };
 
 Button button_boot = {
-  0,
   0,
   false
 };
@@ -34,9 +35,9 @@ int angulos[2]={0,170};
 int t_i_e[2]={1250,1500};
 int flag_angulo=0;
 
-Button more =  {14 , 0, false};
-Button enter = {27,  0, false};
-Button less =  {26, 0, false};
+Button more =  {14, false};
+Button enter = {27, false};
+Button less =  {26, false};
 
 String FirmwareVer = {
   "5.0"
@@ -47,16 +48,11 @@ void fondo(bool r){
       t1= millis();
       t0 = millis();
       tft.setSwapBytes(true);
-      tft.pushImage(0, 0, fondoWidth, fondoHeight, fondo1);
+      tft.pushImage(0, 0, RealTimeWidth, RealTimeHeight, RealTimeScreen);
      }
   }
 
-void drawPulmon(){ 
-  tft.drawLine(30, 10, 30, 35, TFT_BLACK);
-  tft.drawLine(40, 10, 40, 35, TFT_BLACK);
-  tft.drawLine(30, 35, 20, 50, TFT_BLACK);
-  tft.drawLine(40, 35, 50, 50, TFT_BLACK);
-}
+
 int calculoFrecuencia(){
   int aux = int(60000.00/frecuencia);
   return (aux);  
@@ -72,20 +68,8 @@ void principal(){
       tft.setCursor(w/2-60, h/2-90);
       tft.setTextColor(TFT_BLACK,TFT_WHITE);
       tft.setTextDatum(TC_DATUM); // Centre text on x,y position
-
       int xpos = tft.width() / 2; // Half the screen width
       int ypos = 70;
-    /*
-      tft.setFreeFont(FSB24);                              // Select the font
-      tft.drawString("VENTILADOR", xpos, ypos, GFXFF);  // Draw the text string in the selected GFX free font
-      ypos += tft.fontHeight(GFXFF);
-      tft.drawString("MECANICO DE", xpos, ypos, GFXFF);  // Draw the text string in the selected GFX free font
-      ypos += tft.fontHeight(GFXFF);
-      tft.drawString("EMERGENCIAS", xpos, ypos, GFXFF);  // Draw the text string in the selected GFX free font
-      ypos += tft.fontHeight(GFXFF);
-      tft.setFreeFont(FSB9);  
-      tft.drawString("Soporte : miguelquispecastro@uni.com", 20, 300, GFXFF);
-      tft.pushImage(0, 0, pulmonWidth, pulmonHeight, pulmon);*/
     }
     refresh = false;
 
@@ -108,7 +92,7 @@ void volume(){
         ypos += tft.fontHeight(GFXFF);
         tft.drawString( String(volumen), xpos, ypos, GFXFF);  // Draw the text string in the selected GFX free font
         ypos += tft.fontHeight(GFXFF);
-        drawPulmon();
+
     }
     refresh = false;
     if(more.pressed){
@@ -204,18 +188,21 @@ void frecuency(){
 
 int contador_pasos = 0 ;
 int r = 1 ; 
-int direccion = 0;
+int direccion = 1;
+int t_step=0;
 void Respira(){
-  if(contador_pasos >= 200  || contador_pasos <=0){
-      direccion = 1 - direccion;
-      digitalWrite(3,direccion);    
-      r = r *(-1);
-    }
   contador_pasos = contador_pasos + r;
+  if(contador_pasos >= volumen  || contador_pasos <=0){
+      direccion = 1 - direccion;
+      r = r *(-1);
+      digitalWrite(3,direccion);     
+    }
+  t_step = 60000/frecuencia;
+  t_step = t_step / (4* volumen);
   digitalWrite(1,HIGH);
-  delay(2);
+  delay(t_step);
   digitalWrite(1,LOW);
-  delay(2);
+  delay(t_step);
  }
  void secundario(){
     //fondo(refresh);

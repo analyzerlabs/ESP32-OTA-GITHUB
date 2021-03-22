@@ -11,7 +11,6 @@
 TFT_eSPI tft = TFT_eSPI(); 
 
 #include "variables.h"
-#include "graficos.h"
 #include "server.h"
 
 #define URL_fw_Version "https://raw.githubusercontent.com/analyzerlabs/ESP32-OTA-GITHUB/master/bin_version.txt"
@@ -37,13 +36,9 @@ void repeatedCall() {
   }
   if ((currentMillis - previousMillis_2) >= mini_interval) {
     previousMillis_2 = currentMillis;
-    Serial.print("idle loop...");
-    Serial.print(num++);
-    Serial.print(" Active fw version:");
-    Serial.println(FirmwareVer);
+
    if(WiFi.status() == WL_CONNECTED) 
    {
-       Serial.println("wifi connected");
    }
    else
    {
@@ -59,20 +54,16 @@ void repeatedCall() {
     s->pressed = true;
 }*/
 void IRAM_ATTR increment() {
-    more.numberKeyPresses +=1;
     more.pressed = true;
 }
 void IRAM_ATTR change() {
-    enter.numberKeyPresses +=1;
     enter.pressed = true;
 }
 void IRAM_ATTR decrement() {
-    less.numberKeyPresses +=1;
     less.pressed = true;
 }
 
 void IRAM_ATTR isr() {
-  button_boot.numberKeyPresses += 1;
   button_boot.pressed = true;
 }
 
@@ -96,33 +87,112 @@ void setup() {
   //Serial.println(FirmwareVer);
   pinMode(LED_BUILTIN, OUTPUT);
   tft.setTextFont(7);
-  
-  opcion = 0;
+  Menu = 0;
   enter.pressed = false;
   connect_wifi();
   server_init();
+  tft.setSwapBytes(true);
+  tft.pushImage(0, 0, SplashWidth, SplashHeight, SplashScreen);
+  repeatedCall();
+  delay(5000);
+  tft.pushImage(0, 0, RealTimeWidth, RealTimeHeight, RealTimeScreen);
 }
 
+void navegador(){
+  if(ventana == 0 && enter.pressed == true){
+       delay(50);enter.pressed = false;
+       ventana = 1;
+    }
+  else if(ventana == 1 && more.pressed == true){
+       delay(50);more.pressed = false;
+       Menu ++;
+    }  
+  else if(ventana == 1 && less.pressed == true){
+       delay(50);less.pressed = false;
+       Menu --;
+    }
 
-void loop() {
+  else if(ventana == 1 && enter.pressed == true){
+      delay(50);enter.pressed = false;
+      if(Menu == 0) ventana = 10;
+      else if(Menu == 1) ventana = 11; 
+      else if(Menu == 2) ventana = 12;
+      else if(Menu == 3) ventana = 13; 
+    }
+    //*********************************************//
+  else if(ventana == 10 && more.pressed == true){
+      delay(50);more.pressed = false;
+      volumen+=5;
+    }
+  else if(ventana == 10 && less.pressed == true){
+      delay(50);less.pressed = false;
+      volumen-=5;
+    } 
+    //*********************************************//   
+  else if(ventana == 11 && more.pressed == true){
+      delay(50);more.pressed = false;
+      oxigenacion+=1;
+    }
+  else if(ventana == 11 && less.pressed == true){
+      delay(50);less.pressed = false;
+      oxigenacion-=1;
+    }
+    //*********************************************//    
+  else if(ventana == 12 && more.pressed == true){
+      delay(50);more.pressed = false;
+      frecuencia+=1;
+    }
+  else if(ventana == 12 && less.pressed == true){
+      delay(50);less.pressed = false;
+      frecuencia-=1;
+    }
+  //*********************************************//
+  else if(ventana == 13 && enter.pressed == true){
+      delay(50);enter.pressed = false;
+      ventana = 0;
+    }
+  //*********************************************//
+   else if( (ventana == 10 || ventana == 11 || ventana == 12)   && enter.pressed == true){
+      delay(50);enter.pressed = false;
+      ventana = 1;
+    }  
+   //*********************************************//
+  if(Menu%4 == 0){
+      tft.setSwapBytes(true);
+      tft.pushImage(0, 0, VolumenOnWidth, VolumenOnHeight, VolumenScreenOn);
+      tft.pushImage(240, 0, OxigenacionOnWidth, OxigenacionOnHeight, OxigenacionScreenOff);
+      tft.pushImage(0, 160, FrecuenciaOnWidth, FrecuenciaOnHeight, FrecuenciaScreenOff);
+      tft.pushImage(240, 160, AtrasOnWidth, AtrasOnHeight, AtrasScreenOff);
+  }
+  else if(Menu%4 == 1){
+      tft.setSwapBytes(true);
+      tft.pushImage(0, 0, VolumenOnWidth, VolumenOnHeight, VolumenScreenOff);
+      tft.pushImage(240, 0, OxigenacionOnWidth, OxigenacionOnHeight, OxigenacionScreenOn);
+      tft.pushImage(0, 160, FrecuenciaOnWidth, FrecuenciaOnHeight, FrecuenciaScreenOff);
+      tft.pushImage(240, 160, AtrasOnWidth, AtrasOnHeight, AtrasScreenOff);
+  } 
+  else if(Menu%4 == 2){
+      tft.setSwapBytes(true);
+      tft.pushImage(0, 0, VolumenOnWidth, VolumenOnHeight, VolumenScreenOff);
+      tft.pushImage(240, 0, OxigenacionOnWidth, OxigenacionOnHeight, OxigenacionScreenOff);
+      tft.pushImage(0, 160, FrecuenciaOnWidth, FrecuenciaOnHeight, FrecuenciaScreenOn);
+      tft.pushImage(240, 160, AtrasOnWidth, AtrasOnHeight, AtrasScreenOff);
+  }
+  else if(Menu%4 == 3){
+      tft.setSwapBytes(true);
+     tft.pushImage(0, 0, VolumenOnWidth, VolumenOnHeight, VolumenScreenOff);
+      tft.pushImage(240, 0, OxigenacionOnWidth, OxigenacionOnHeight, OxigenacionScreenOff);
+      tft.pushImage(0, 160, FrecuenciaOnWidth, FrecuenciaOnHeight, FrecuenciaScreenOff);
+      tft.pushImage(240, 160, AtrasOnWidth, AtrasOnHeight, AtrasScreenOn);
+  }
+}
+void loop(){
   if (button_boot.pressed) { //to connect wifi via Android esp touch app 
     //Serial.println("Firmware update Starting..");
     firmwareUpdate();
     button_boot.pressed = false;
   }
-  repeatedCall();
-  if(enter.pressed){
-      delay(50);
-      enter.pressed = false;
-      refresh = true;
-      opcion++;
-      if(opcion>=4) opcion = 0;
-  }  
-  if(opcion == 0)principal();
-  else if(opcion == 1)volume();
-  else if(opcion == 2)frecuency();
-  else if(opcion == 3)secundario();
-  
+  navegador();  
 }
 
 void connect_wifi() {
@@ -130,13 +200,8 @@ void connect_wifi() {
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    //Serial.print(".");
   }
 
-  //Serial.println("");
-  //Serial.println("WiFi connected");
-  //Serial.println("IP address: ");
-  //Serial.println(WiFi.localIP());
 }
 
 
