@@ -15,11 +15,11 @@ int LED_BUILTIN = 2;
 boolean paso=true;
 int angulo_subida=0;
 int w=480,h=320;
-int volumen=300;
-int frecuencia = 20;
+int volumen=400;
+int frecuencia = 15;
 int Menu=0;
 int ventana=0;
-int oxigenacion = 0;
+int oxigenacion = 85;
 bool refresh = true;
 struct Button {
   const uint8_t PIN;
@@ -31,7 +31,6 @@ Button button_boot = {
   false
 };
 unsigned long int t1,t0;
-int angulos[2]={0,170};
 int t_i_e[2]={1250,1500};
 int flag_angulo=0;
 
@@ -52,61 +51,6 @@ int calculoVolumen(){
   int aux = int(volumen*178.00/600);
   return (aux);  
 }  
-
-
-  
-
-  
-void frecuency(){
-    //Serial.println("opcion frecuencia");  
-    if(refresh){
-        tft.setTextColor(TFT_BLACK,TFT_WHITE);
-        tft.setTextDatum(TC_DATUM); // Centre text on x,y position
-  
-        int xpos = tft.width() / 2; // Half the screen width
-        int ypos = 70;
-      
-        tft.setFreeFont(FSB24);                              // Select the font
-        tft.drawString("Frecuencia", xpos, ypos, GFXFF);  // Draw the text string in the selected GFX free font
-        ypos += tft.fontHeight(GFXFF);
-        tft.drawString( String(frecuencia), xpos, ypos, GFXFF);  // Draw the text string in the selected GFX free font
-        ypos += tft.fontHeight(GFXFF);
-    }
-    refresh = false;
-    //aqui mas codigo
-    if(more.pressed){
-      delay(50);
-      more.pressed = false;
-      frecuencia+=1;
-      tft.setTextColor(TFT_BLACK,TFT_WHITE);
-        tft.setTextDatum(TC_DATUM); // Centre text on x,y position
-  
-        int xpos = tft.width() / 2; // Half the screen width
-        int ypos = 70;
-      
-        tft.setFreeFont(FSB24);                              // Select the font
-        tft.drawString("Frecuencia", xpos, ypos, GFXFF);  // Draw the text string in the selected GFX free font
-        ypos += tft.fontHeight(GFXFF);
-        tft.drawString( String(frecuencia), xpos, ypos, GFXFF); 
-    }
-    else if(less.pressed){
-      delay(50);
-      less.pressed = false;
-      frecuencia-=1;
-      tft.setTextColor(TFT_BLACK,TFT_WHITE);
-        tft.setTextDatum(TC_DATUM); // Centre text on x,y position
-  
-        int xpos = tft.width() / 2; // Half the screen width
-        int ypos = 70;
-      
-        tft.setFreeFont(FSB24);                              // Select the font
-        tft.drawString("Frecuencia", xpos, ypos, GFXFF);  // Draw the text string in the selected GFX free font
-        ypos += tft.fontHeight(GFXFF);
-        tft.drawString( String(frecuencia), xpos, ypos, GFXFF); 
-    }
-    t_i_e[0]=calculoFrecuencia()-t_i_e[1];
-    //Serial.println(t_i_e[0]);
-  }
 
 
 int contador_pasos = 0 ;

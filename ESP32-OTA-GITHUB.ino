@@ -89,7 +89,7 @@ void setup() {
   Menu = 0;
   enter.pressed = false;
   connect_wifi();
-  //server_init();
+  //  server_init();
   tft.setSwapBytes(true);
   tft.pushImage(0, 0, SplashWidth, SplashHeight, SplashScreen);
   repeatedCall();
@@ -99,27 +99,30 @@ void setup() {
 
 void fondo(){
       tft.pushImage(0, 0, FondoOffWidth, FondoOffHeight, FondoScreenOff);
-      /*tft.pushImage(0, 0, VolumenOnWidth, VolumenOnHeight, VolumenScreenOff);
-      tft.pushImage(240, 0, OxigenacionOnWidth, OxigenacionOnHeight, OxigenacionScreenOff);
-      tft.pushImage(0, 160, FrecuenciaOnWidth, FrecuenciaOnHeight, FrecuenciaScreenOff);
-      tft.pushImage(240, 160, AtrasOnWidth, AtrasOnHeight, AtrasScreenOff);*/
   }
 void navegador(){
-  if(ventana == 0 && enter.pressed == true){
-       delay(50);enter.pressed = false;
+  if(ventana == 0 && refresh == true){
+       tft.pushImage(0, 0, RealTimeWidth, RealTimeHeight, RealTimeScreen);
+       refresh = false;
+    }
+  else if(ventana == 0 && enter.pressed == true && refresh == false){
+       delay(150);enter.pressed = false;
        ventana = 1;
+       refresh = true;
     }
   else if(ventana == 1 && more.pressed == true){
-       delay(50);more.pressed = false;
+       delay(150);more.pressed = false;
        Menu ++;
+       refresh = true;
     }  
   else if(ventana == 1 && less.pressed == true){
-       delay(50);less.pressed = false;
+       delay(150);less.pressed = false;
        Menu --;
+       refresh = true;
     }
 
   else if(ventana == 1 && enter.pressed == true){
-      delay(50);enter.pressed = false;
+      delay(150);enter.pressed = false;
       if(Menu == 0) ventana = 10;
       else if(Menu == 1) ventana = 11; 
       else if(Menu == 2) ventana = 12;
@@ -127,64 +130,81 @@ void navegador(){
     }
     //*********************************************//
   else if(ventana == 10 && more.pressed == true){
-      delay(50);more.pressed = false;
+      delay(150);more.pressed = false;
       volumen+=5;
+      tft.setFreeFont(FMB9); 
+      tft.drawString( String(volumen), 167, 128, GFXFF);
     }
   else if(ventana == 10 && less.pressed == true){
-      delay(50);less.pressed = false;
+      delay(150);less.pressed = false;
       volumen-=5;
+      tft.setFreeFont(FMB9); 
+      tft.drawString( String(volumen), 167, 128, GFXFF);
     } 
     //*********************************************//   
   else if(ventana == 11 && more.pressed == true){
-      delay(50);more.pressed = false;
+      delay(150);more.pressed = false;
       oxigenacion+=1;
+      tft.setFreeFont(FMB9); 
+      tft.drawString( String(oxigenacion), 367, 134, GFXFF);
     }
   else if(ventana == 11 && less.pressed == true){
-      delay(50);less.pressed = false;
+      delay(150);less.pressed = false;
       oxigenacion-=1;
+      tft.setFreeFont(FMB9); 
+      tft.drawString( String(oxigenacion), 367, 134, GFXFF);
     }
     //*********************************************//    
   else if(ventana == 12 && more.pressed == true){
-      delay(50);more.pressed = false;
+      delay(150);more.pressed = false;
       frecuencia+=1;
+      tft.setFreeFont(FMB9); 
+      tft.drawString( String(frecuencia), 195, 291, GFXFF);
     }
   else if(ventana == 12 && less.pressed == true){
-      delay(50);less.pressed = false;
+      delay(150);less.pressed = false;
       frecuencia-=1;
+      tft.setFreeFont(FMB9); 
+      tft.drawString( String(frecuencia), 195, 291, GFXFF);
     }
   //*********************************************//
   else if(ventana == 13 && enter.pressed == true){
-      delay(50);enter.pressed = false;
+      delay(150);enter.pressed = false;
       ventana = 0;
+      refresh = true;
+      
     }
   //*********************************************//
    else if( (ventana == 10 || ventana == 11 || ventana == 12)   && enter.pressed == true){
-      delay(50);enter.pressed = false;
+      delay(150);enter.pressed = false;
       ventana = 1;
     }  
    //*********************************************//
-  if(Menu%4 == 0){
-      tft.setSwapBytes(true);
+  if(ventana ==1){
+    if(abs(Menu)%4 == 0 && refresh == true ){
       fondo();
       tft.pushImage(0, 0, VolumenOnWidth, VolumenOnHeight, VolumenScreenOn);
-      tft.setSwapBytes(false);
+      refresh = false;
   }
-  else if(Menu%4 == 1){
-      tft.setSwapBytes(true);
+  else if(abs(Menu)%4 == 1 && refresh == true){
       fondo();
       tft.pushImage(240, 0, OxigenacionOnWidth, OxigenacionOnHeight, OxigenacionScreenOn);
-      
+      refresh = false;
   } 
-  else if(Menu%4 == 2){
-      tft.setSwapBytes(true);
+  else if(abs(Menu)%4 == 2 && refresh == true){
       fondo();
       tft.pushImage(0, 160, FrecuenciaOnWidth, FrecuenciaOnHeight, FrecuenciaScreenOn);
-      //tft.pushImage(240, 160, AtrasOnWidth, AtrasOnHeight, AtrasScreenOff);
+      refresh = false;
   }
-  else if(Menu%4 == 3){
-      tft.setSwapBytes(true);
+  else if(abs(Menu)%4 == 3 && refresh == true){
       fondo();
       tft.pushImage(240, 160, AtrasOnWidth, AtrasOnHeight, AtrasScreenOn);
+      refresh = false;
+    }
+    tft.setFreeFont(FMB9); 
+    tft.drawString( String(volumen), 167, 128, GFXFF);
+    tft.drawString( String(frecuencia), 195, 291, GFXFF);
+    tft.drawString( String(oxigenacion), 367, 134, GFXFF);
   }
 }
 void loop(){
