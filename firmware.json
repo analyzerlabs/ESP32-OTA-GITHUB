@@ -3,5 +3,5 @@
     "version": 2,
     "host": "raw.githubusercontent.com",
     "port": 443,
-    "bin": "/analyzerlabs/ESP32-OTA-GITHUB/master/fw.bin"
+    "bin": "/analyzerlabs/ESP32-OTA-GITHUB/fw.bin"
 }
